@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Genre;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 
 class GenreController extends Controller
@@ -18,7 +19,7 @@ class GenreController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request,$rules);
+        $this->validate($request,$this->rules);
         return Genre::create($request->all);
     }
 
@@ -29,7 +30,7 @@ class GenreController extends Controller
 
     public function update(Request $request, Genre $genre)
     {
-        $this->validate($request,$rules);
+        $this->validate($request,$this->rules);
         $genre->fill($request->all);
         $genre->save();
         $genre->update($request->all);
@@ -39,6 +40,6 @@ class GenreController extends Controller
     public function destroy(Genre $genre)
     {
         $genre->delete();
-        return $response()->noContent(); 
+        return response()->noContent();
     }
 }
