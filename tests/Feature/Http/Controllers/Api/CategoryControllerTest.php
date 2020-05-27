@@ -116,4 +116,17 @@ class CategoryControllerTest extends TestCase
         $response->assertJsonFragment(['description'=>null]);
     }
 
+    public function testDelete(){
+
+        $category = factory(Category::class)->create();
+        $response = $this->json('DELETE',route('categories.destroy',['category'=>$category->id]));
+
+        $categoryDeleted = Category::find($category->id);
+        $this->assertNull($categoryDeleted);
+
+        $response = $this->get(route('categories.show',['category'=>$category->id]));
+
+        $response->assertStatus(404);
+    }
+
 }
