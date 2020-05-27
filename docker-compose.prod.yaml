@@ -5,21 +5,24 @@ services:
        container_name : app
        volumes:
           - .:/var/www
-       entrypoint: dockerize -timeout 40s ./.docker/entrypoint.sh
        networks:
           - app-network
        depends_on:
           - db
           - redis
-       # environment:
-       #    - DB_HOST=db
-       #    - DB_DATABASE=laravel
-       #    - DB_USERNAME=root
-       #    - DB_PASSWORD=root
-
-
-
-
+    nginx:
+       build: ./.docker/nginx
+       container_name : nginx
+       restart : always
+       tty : true
+       ports :
+          - "8000:80"
+       volumes:
+          - .:/var/www
+       depends_on:
+          - app
+       networks:
+          - app-network
     db:
        image: mysql:5.7
        command: --innodb-use-native-aio=0
@@ -37,23 +40,6 @@ services:
        networks:
           - app-network
 
-    nginx:
-      build: ./.docker/nginx
-      container_name : nginx
-      environment:
-          - TEST_HOST=app
-          - TEST_PORT=9000
-      restart : always
-      tty : true
-      ports :
-         - "8000:80"
-      volumes:
-         - .:/var/www
-    #  entrypoint: dockerize -template /var/www/.docker/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf nginx -g "daemon off";
-      depends_on:
-         - app
-      networks:
-         - app-network
     redis:
       image: redis:alpine
       expose:
