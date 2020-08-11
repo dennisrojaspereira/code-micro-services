@@ -117,15 +117,11 @@ class GenreControllerTest extends TestCase
 
     public function testDelete(){
 
-        $Genre = factory(Genre::class)->create();
-        $response = $this->json('DELETE',route('genres.destroy',['genre'=>$Genre->id]));
-
-        $GenreDeleted = Genre::find($Genre->id);
-        $this->assertNull($GenreDeleted);
-
-        $response = $this->get(route('genres.show',['genre'=>$Genre->id]));
-
-        $response->assertStatus(404);
+        $genre = factory(Genre::class)->create();
+        $response = $this->json('DELETE',route('genres.destroy',['genre'=>$genre->id]));
+        $response->assertStatus(204);
+        $this->assertNull(Genre::find($genre->id));
+        $this->assertNotNull(Genre::withTrashed()->find($genre->id));
     }
 
 }
