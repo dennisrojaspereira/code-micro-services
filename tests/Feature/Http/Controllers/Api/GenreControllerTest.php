@@ -36,7 +36,7 @@ class GenreControllerTest extends TestCase
 
     public function testInvalidationData(){
         $response = $this->json('POST',route('genres.store',[]));
-        $this->asserInvalidationRequired($response);
+        $this->assertInvalidationRequired($response);
 
         $response = $this->json('POST',route('genres.store'),['name'=>str_repeat('a',260),'is_active'=>'a']);
         $this->assertInvalidationMax($response);
@@ -45,7 +45,7 @@ class GenreControllerTest extends TestCase
 
         $Genre = factory(Genre::class)->create();
         $response = $this->json('PUT',route('genres.update',['genre'=>$Genre->id]),[]);
-        $this->asserInvalidationRequired($response);
+        $this->assertInvalidationRequired($response);
          $response = $this->json('PUT',route('genres.update',['genre'=>$Genre->id]),['name'=>str_repeat('a',260),'is_active'=>'a']);
 
         // dd($response->content());
@@ -75,7 +75,7 @@ class GenreControllerTest extends TestCase
 
     }
 
-    protected function asserInvalidationRequired(TestResponse $response){
+    protected function assertInvalidationRequired(TestResponse $response){
         $response
         ->assertStatus(422)
         ->assertJsonValidationErrors(['name'])
