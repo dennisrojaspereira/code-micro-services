@@ -215,6 +215,54 @@ class VideoControllerTest extends TestCase
     }
 
 
+
+    public function testStore()
+    {
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+
+        $response = $this->json(
+            'POST',
+            $this->routeStore(),
+            $this->sendData + [
+                'categories_id' => [$category->id],
+                'genres_id' => [$genre->id],
+            ] 
+        );
+        $response->assertStatus(201);
+        $id = $response->json('id');
+        $video = Video::find($id);
+
+    }
+
+    public function testUpdate()
+    {
+        $category = factory(Category::class)->create();
+        $genre = factory(Genre::class)->create();
+        $video = factory(Video::class)->create();
+
+        $response = $this->json(
+            'PUT',
+            $this->routeUpdate(),
+            $this->sendData + [
+                'categories_id' => [$category->id],
+                'genres_id' => [$genre->id],
+            ] 
+        );
+        $response->assertStatus(200);
+        $id = $response->json('id');
+        $video = Video::find($id);
+    }
+
+    public function testDelete(){
+
+        $response = $this->json('DELETE',route('videos.destroy',['video'=>$this->video->id]));
+        $response->assertStatus(204);
+        $this->assertNull(Video::find($this->video->id));
+        $this->assertNotNull(Video::withTrashed()->find($this->video->id));
+    }
+
+
     protected function model()
     {
         return Video::class;
